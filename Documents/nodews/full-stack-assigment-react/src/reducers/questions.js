@@ -26,12 +26,12 @@ export default function questions(state = initialProblemsState, action) {
       // return [action.project, ...state];
       return {
         ...state,
-        questions: [action.project, ...state.questions],
+        questions: [action.question, ...state.questions],
       };
     case UPDATE_CURRENT_QUESTION_IN_STORE:
       return {
         ...state,
-        currentProblem: action.project,
+        currentProblem: action.question,
       };
     case UPDATE_REQ_INFO_RETURNED_FROM_SERVER:
       return {

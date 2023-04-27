@@ -25,7 +25,6 @@ function IssueTypeSelector(props) {
       </label>
       <label>
         <Badge
-          bg="light"
           text="dark"
           className={
             props.issueType === "Security" ? " text-white mx-2" : "mx-2"

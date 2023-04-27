@@ -59,7 +59,7 @@ export function login(email, password) {
           localStorage.setItem("refreshToken", data.refreshToken);
           const decodedInfo = jwt_decode(data.accessToken);
           console.log("=====_user ", decodedInfo);
-          const user = { email: decodedInfo.email };
+          const user = { email: decodedInfo.email, role: decodedInfo.role };
           dispatch(loginSuccessful(user));
           return;
         }

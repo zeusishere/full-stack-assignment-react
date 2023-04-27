@@ -6,16 +6,12 @@ import { useParams } from "react-router-dom";
 import {
   getCurrentProblemFromDatabase,
   updateCurrentProblemInStore,
+  addSubMissionToAQuestion,
 } from "../../actions/actionCreators/question";
 import {
   Container,
   Row,
   Col,
-  // Table,
-  // thead,
-  // tr,
-  // th,
-  // tbody,
   Dropdown,
   Button,
   Form,
@@ -38,244 +34,124 @@ import PaginationComponent from "./PaginationComponent";
 function Problem(props) {
   // get id of project from url params
   let { id } = useParams();
+  console.log("id is  ", id);
   //  get current project from redux store
   let currentProblem = useSelector((state) => {
-    return state.projects.currentProblem;
+    return state.questions.currentProblem;
   });
   //  acessing redux-store data and dispatch
   let dispatch = useDispatch();
-  let auth = useSelector((state) => {
-    return state.userAuth;
+  let { userAuth: auth, questions } = useSelector((state) => {
+    return state;
   });
+  console.log("currentProblem    ", currentProblem);
   // get logged in user and id
   let currentUser = auth.user;
   let currentUserId = currentUser ? currentUser._id : null;
 
   // if current project is empty ,  fetch current project from the server
-  if (Object.keys(currentProblem).length === 0 || currentProblem._id !== id) {
-    // dispatching an action to get project and update it in the store
-    dispatch(getCurrentProblemFromDatabase(id));
+  if (
+    Object.keys(currentProblem || {}).length === 0 ||
+    currentProblem?._id.toString() !== id
+  ) {
+    currentProblem = (questions.questions || []).find(
+      (q) => q._id.toString() === id
+    );
+    console.log(
+      "currentProblem   =======  ",
+      typeof id,
+      questions.questions,
+      currentProblem
+    );
+    if (Object.keys(currentProblem || {}).length)
+      // dispatching an action to get project and update it in the store
+      dispatch(updateCurrentProblemInStore(currentProblem));
   }
-  // projectAuthorId and project  author id
-  const projectAuthorId = currentProblem.projectAuthor
-    ? currentProblem.projectAuthor._id
-    : null;
-  // gets all issues from redux store for the project which is currently open
-  let issues = currentProblem.issues;
-  let areIssuesPresent;
-  // set up state for issueStatus . this is used to filter out issues to display
-  const [status, setStatus] = useState("all");
-  const [issueType, setIssueType] = useState("all");
-  // changes issueStatus to display desirable issues on screen
-  let onClickSwitchStatus = (event) => {
-    setStatus(event.target.value);
-  };
-  let onClickSwitchIssueType = (event) => {
-    setIssueType(event.target.value);
-  };
 
-  // pagination logic  starts
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  let totalPages = issues && Math.ceil(issues.length / itemsPerPage);
-  // stores the issues to be displayed on current page
-  let issuesOnCurrentPage =
-    issues && issues.slice(indexOfFirstItem, indexOfLastItem);
-  // pagination logic ends
-
-  // issue filtering logic
-  if (issuesOnCurrentPage) {
-    areIssuesPresent = issues.length > 0 ? true : false;
-    switch (status) {
-      case "open":
-        issuesOnCurrentPage = issuesOnCurrentPage.filter(
-          (issue) => issue.issueStatus === "Open"
-        );
-        break;
-      case "closed":
-        issuesOnCurrentPage = issuesOnCurrentPage.filter(
-          (issue) => issue.issueStatus === "Closed"
-        );
-        break;
-    }
-    switch (issueType) {
-      case "Security":
-        issuesOnCurrentPage = issuesOnCurrentPage.filter(
-          (issue) => issue.label === "Security"
-        );
-        break;
-      case "Bug":
-        issuesOnCurrentPage = issuesOnCurrentPage.filter(
-          (issue) => issue.label === "Bug"
-        );
-        break;
-      case "Task":
-        issuesOnCurrentPage = issuesOnCurrentPage.filter(
-          (issue) => issue.label === "Task"
-        );
-        break;
-    }
-  }
   // redirects to sign in page if user is not logged in
   if (auth && !auth.isLoggedin) {
     return <Navigate to="/user/sign-in" />;
   }
+
+  const [codeInEditor, updateCode] = useState("Enter your Code Here");
+  const updateCodeOnUserinput = (event) => {
+    let fieldName = event.target.getAttribute("name");
+    //  used es6 computed file name
+
+    updateCode(event.target.value);
+    console.log(codeInEditor);
+  };
+  const onSubmit = () => {
+    dispatch(addSubMissionToAQuestion(id, codeInEditor));
+  };
+  const difficulty = currentProblem.difficulty;
+  const difficultyBadgeClass =
+    difficulty === "medium"
+      ? "success"
+      : difficulty === "easy"
+      ? "primary"
+      : "danger";
   return (
-    <Container style={{ marginTop: "16%" }}>
+    <Container style={{ marginTop: "16%", marginBottom: "16%" }}>
       <Row className="mb-2">
-        <h1 className="display-3"> {currentProblem.projectName}</h1>
+        <Col>
+          {" "}
+          <h1 className="display-3 "> {currentProblem.title}</h1>
+        </Col>
+
+        <Col className="text-end ">
+          <h5 className="text-muted d-inline-block mt-3">Difficulty : </h5>
+          <Badge bg={difficultyBadgeClass}> {difficulty.toUpperCase()}</Badge>
+        </Col>
       </Row>
+      <hr></hr>
       <Row className="mb-2 ms-2">
-        <hr></hr>
         Description :<br />
-        {currentProblem.projectDescription}
+        {currentProblem.description}
+      </Row>
+      <Row className="mb-2 ms-2 col-4">
+        Test Cases :<br />
+        {currentProblem.testCases.map((tC, index) => (
+          <section className="bg-secondary text-white rounded my-1">
+            <h5 className="text-muted d-inline-block">
+              Example {index + 1} :{" "}
+            </h5>
+            <p>
+              Input : {tC.input}
+              <br />
+              Output: {tC.output}
+            </p>
+          </section>
+        ))}
       </Row>
       <Row className="mb-2 mt-3 ms-1">
-        <Col>
+        {/* <Col>
           <Badge bg="dark" className="py-2 fs-6 text-capitalize">
-            Problem Author :{" "}
+            :{" "}
             {currentProblem.projectAuthor &&
               currentProblem.projectAuthor.userName}
           </Badge>
-        </Col>
+        </Col> */}
         <Col className="text-end">
-          <h5 className="text-muted d-inline-block">members :</h5>
-          {currentProblem.projectMembers &&
-            currentProblem.projectMembers.slice(0, 5).map((user, index) => {
-              return (
-                <div
-                  key={index}
-                  style={{ display: "inline-block" }}
-                  className="mx-1"
-                >
-                  <TooltipForMembers
-                    tooltipMessage={user.userName}
-                    key={index}
-                  />
-                </div>
-              );
-            })}
-          <h5 className="text-muted d-inline-block">+</h5>
+          <h5 className="text-muted d-inline-block">Difficulty : </h5>
+          <Badge bg={difficultyBadgeClass}> {difficulty.toUpperCase()}</Badge>
         </Col>
       </Row>
       <Row>
-        <h3 className="display-6">issues</h3>
+        <h3 className="display-6">Code Editor</h3>
+        <Form.Control
+          as="textarea"
+          placeholder={codeInEditor}
+          name="code"
+          rows={15}
+          onChange={updateCodeOnUserinput}
+        />
       </Row>
-      {!areIssuesPresent && (
-        <Col xs={12}>
-          <Alert variant="warning" className="text-center mt-5">
-            There are no Issues to view ! <br />
-            Create new issues .
-          </Alert>
-        </Col>
-      )}
-      <Row>
-        <Col className="d-flex justify-content-end">
-          {areIssuesPresent && (
-            <div className="text-end me-auto my-4">
-              Status :
-              <RadioSelector
-                status={status}
-                onClickSwitchStatus={onClickSwitchStatus}
-              />
-            </div>
-          )}
-          {areIssuesPresent && (
-            <div className="text-end me-auto my-4">
-              Issue Type :
-              <IssueTypeSelector
-                issueType={issueType}
-                onClickSwitchIssueType={onClickSwitchIssueType}
-              />
-            </div>
-          )}
-          {projectAuthorId == currentUserId && (
-            <AddUserToProblem projectID={id} />
-          )}
-          <AddNewIssue projectID={id} />
-        </Col>
-      </Row>
-      {areIssuesPresent && (
-        <Row
-          id="yoyo"
-          className="border border-dark mb-3"
-          style={{ minHeight: "480px" }}
-        >
-          <Col style={{ overflowX: "auto" }}>
-            <Table hover size="sm">
-              <thead>
-                <tr>
-                  <th className="text-center">#</th>
-                  <th className="text-center">Issue Type</th>
-                  <th className="text-center">Issue</th>
-                  <th className="text-center">Assignee</th>
-                  <th className="text-center">Status</th>
-                  <th className="text-center">Priority</th>
-                  <th className="text-center">Created</th>
-                  <th className="text-center">Due Date</th>
-                  <th className="text-center">Author</th>
-                  <th className="text-center"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {issues &&
-                  issuesOnCurrentPage.map((issue, index) => {
-                    return (
-                      <tr key={issue._id}>
-                        <td className="text-center">{index + 1}</td>
-                        <td className="text-center ">
-                          <Badge
-                            pill
-                            bg={
-                              issue.label === "Security"
-                                ? "danger"
-                                : issue.label === "Bug"
-                                ? "warning"
-                                : "success"
-                            }
-                          >
-                            {issue.label}
-                          </Badge>
-                        </td>
-                        <td className="text-center">{issue.issueName}</td>
-                        <td className="text-center">
-                          {/* {issue.issueAssignee.userName} */}
-                          <AssignUserModal
-                            assignee={issue.issueAssignee}
-                            issueID={issue._id}
-                          />
-                        </td>
-                        <td className="text-center  ">
-                          <StatusChangeComponent issue={issue} />
-                        </td>
-                        <td className="text-center">{issue.issuePriority}</td>
-                        <td className="text-center">
-                          {new Date(issue.createdAt).toDateString()}
-                        </td>
-                        <td className="text-center">
-                          {new Date(issue.issueDueDate).toDateString()}
-                        </td>
-                        <td className="text-center text-capitalize">
-                          {issue.issueAuthor && issue.issueAuthor.userName}
-                        </td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </Table>
-          </Col>
-        </Row>
-      )}
-      {areIssuesPresent && (
-        <PaginationComponent
-          currentPage={currentPage}
-          totalPages={totalPages}
-          setCurrentPage={setCurrentPage}
-          className="mb-5"
-        ></PaginationComponent>
-      )}
+      <div className="text-end me-2 my-4">
+        <Button variant="outline-success" size="sm" onClick={onSubmit}>
+          Submit Code
+        </Button>
+      </div>
     </Container>
   );
 }

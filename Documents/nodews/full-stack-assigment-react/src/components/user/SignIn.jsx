@@ -57,7 +57,7 @@ class SignIn extends Component {
     // redirect logic
     if (isLoggedin) {
       console.log("singn in privRoutet ", isLoggedin);
-      return <Navigate to="/all-problems" />;
+      return <Navigate to="/" />;
     }
     return (
       <Container style={{ marginTop: "16%" }}>

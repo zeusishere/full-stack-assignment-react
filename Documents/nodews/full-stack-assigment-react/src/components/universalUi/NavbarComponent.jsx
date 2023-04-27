@@ -13,11 +13,7 @@ class NavbarComponent extends Component {
   };
   getProtectedLinks = (isLoggedIn) => {
     return isLoggedIn ? (
-      <React.Fragment>
-        <Nav.Link as={Link} to="/all-problems">
-          Problems
-        </Nav.Link>
-      </React.Fragment>
+      <React.Fragment></React.Fragment>
     ) : (
       <React.Fragment>
         <Nav.Link as={Link} to="/user/sign-in">
@@ -36,7 +32,7 @@ class NavbarComponent extends Component {
       <div>
         <Navbar bg="light" expand="md">
           <Container className=" pe-5">
-            <Navbar.Brand>Issue Tracker</Navbar.Brand>
+            <Navbar.Brand>Geek Code</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="">{this.getProtectedLinks(auth.isLoggedin)}</Nav>

@@ -24,3 +24,5 @@ export const UPDATE_ASSIGNEE_FOR_ISSUE_IN_DATABASE =
 // action to update  reqStatusReturnedFromServer: "", reqMessageReturnedFromServer: null,
 export const UPDATE_REQ_INFO_RETURNED_FROM_SERVER =
   "UPDATE_REQ_INFO_RETURNED_FROM_SERVER";
+
+export const ADD_SUBMISSION_TO_QUESTION = "ADD_SUBMISSION_TO_QUESTION";

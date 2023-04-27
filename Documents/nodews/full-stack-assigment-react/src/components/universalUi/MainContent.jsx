@@ -38,7 +38,7 @@ class MainContent extends Component {
                    }
                 ></Route> */}
                 <Route
-                  path="/problem/id/:id"
+                  path="/question/id/:id"
                   element={<Problem></Problem>}
                 ></Route>
                 <Route path="/user/sign-in" element={<SignIn />}></Route>

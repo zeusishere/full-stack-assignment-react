@@ -12,8 +12,8 @@ class App extends Component {
       const decodedToken = jwt_decode(tokenFromLocalStorage);
       //  get user details from decoded token
       // const decodedToken = {};
-      let user = (({ userName, email, sub: _id }) => {
-        return { userName, email, _id };
+      let user = (({ userName, email, sub: _id, role }) => {
+        return { userName, email, _id, role };
       })(decodedToken);
 
       this.props.dispatch(authenticateUser(user));

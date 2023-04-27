@@ -12,8 +12,9 @@ class AddNewProblem extends Component {
     super(props);
     this.state = {
       show: false,
-      projectName: "",
-      projectDescription: "",
+      title: "",
+      description: "",
+      difficulty: "easy",
       formError: false,
     };
   }
@@ -29,10 +30,16 @@ class AddNewProblem extends Component {
   };
   // this fn updates field value from html dom to local component state
   updateProblemNameOnUserInput = (event) => {
-    this.setState({ projectName: event.target.value });
+    this.setState({ title: event.target.value });
+    console.log("updated State", this.state);
   };
   updateProblemDescriptionOnUserInput = (event) => {
-    this.setState({ projectDescription: event.target.value });
+    this.setState({ description: event.target.value });
+    console.log("updated State", this.state);
+  };
+  updateProblemDifficultyOnUserInput = (event) => {
+    this.setState({ difficulty: event.target.value });
+    console.log("updated State", this.state);
   };
   // the fn prevents empty data from being submitted to the server
   validateFormField = (formField) => {
@@ -41,16 +48,16 @@ class AddNewProblem extends Component {
   // submits form to server
   submitForm = (event) => {
     event.preventDefault();
-    const { projectName, projectDescription } = this.state;
+    const { title, description, difficulty } = this.state;
     const areProblemNameAndProblemDescriptionValidated =
-      this.validateFormField(projectName) &&
-      this.validateFormField(projectDescription);
+      this.validateFormField(title) && this.validateFormField(description);
     areProblemNameAndProblemDescriptionValidated
       ? (() => {
           this.props.dispatch(
-            addProblemToDatabase({ projectName, projectDescription })
+            addProblemToDatabase({ title, description, difficulty })
           );
           this.setState({ formError: false });
+          this.setState({ show: false });
         })()
       : this.setState({ formError: formErrorInput });
   };
@@ -62,7 +69,7 @@ class AddNewProblem extends Component {
       <React.Fragment>
         <div className="text-end me-2 my-4">
           <Button variant="outline-primary" size="sm" onClick={this.handleShow}>
-            Add New Problem
+            Add New Question
           </Button>
         </div>
         <Modal
@@ -97,13 +104,13 @@ class AddNewProblem extends Component {
               ""
             )}
 
-            <h4>Problem Details</h4>
-            <Form.Group className="mb-3" controlId="projectName">
+            <h4>Question Details</h4>
+            <Form.Group className="mb-3" controlId="title">
               <Form.Label>Problem Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter Problem Name"
-                name="projectName"
+                name="title"
                 onChange={this.updateProblemNameOnUserInput}
               />
             </Form.Group>
@@ -113,8 +120,45 @@ class AddNewProblem extends Component {
                 as="textarea"
                 style={{ height: "80px" }}
                 placeholder="Enter Problem Description"
-                name="projectDescription"
+                name="description"
                 onChange={this.updateProblemDescriptionOnUserInput}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="difficulty">
+              <Form.Label>Difficulty: </Form.Label>
+              {/* <Form.Control
+                type="text"
+                placeholder="Enter Problem Name"
+                name="title"
+                onChange={this.updateProblemNameOnUserInput}
+              /> */}
+              {"    "}
+              <Form.Check
+                inline
+                label="easy"
+                value="easy"
+                name="group1"
+                type="radio"
+                id={`inline-radio-1`}
+                onChange={this.updateProblemDifficultyOnUserInput}
+              />
+              <Form.Check
+                inline
+                label="medium"
+                value="medium"
+                name="group1"
+                type="radio"
+                id={`inline-radio-2`}
+                onChange={this.updateProblemDifficultyOnUserInput}
+              />
+              <Form.Check
+                inline
+                label="hard"
+                value="hard"
+                type="radio"
+                id={`inline-radio-3`}
+                onChange={this.updateProblemDifficultyOnUserInput}
               />
             </Form.Group>
             <div className="text-center">
@@ -122,7 +166,7 @@ class AddNewProblem extends Component {
                 variant="primary"
                 type="submit"
                 onClick={this.submitForm}
-                // disabled={isAuthenticationInProgess}
+                onChange={this.updateProblemDescriptionOnUserInput}
               >
                 Add Problem
               </Button>

@@ -7,8 +7,9 @@ import {
   ADD_ISSUE_TO_QUESTION_IN_DATABASE,
   UPDATE_REQ_INFO_RETURNED_FROM_SERVER,
   DELETE_QUESTION_FROM_STORE,
+  ADD_SUBMISSION_TO_QUESTION,
 } from "../actionTypes/question";
-import { getFormBody } from "../../helpers/utils";
+import { getFormBody, getJsonBody } from "../../helpers/utils";
 
 export function getAllProblemsFromDatabase() {
   return (dispatch) => {
@@ -35,7 +36,7 @@ export function addAllProblemsFromDatabaseToStore(questions) {
 }
 
 // questionAuthor has not been provided to the fn as on the server we will get it from token
-export function addProblemToDatabase({ questionName, questionDescription }) {
+export function addProblemToDatabase({ title, description, difficulty }) {
   return (dispatch) => {
     let url = APIUrls.addProblemToServerDB();
     let jwtToken = localStorage.getItem("token");
@@ -43,9 +44,9 @@ export function addProblemToDatabase({ questionName, questionDescription }) {
       method: "POST",
       headers: {
         Authorization: jwtToken,
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json; charset=utf-8",
       },
-      body: getFormBody({ questionName, questionDescription }),
+      body: getJsonBody({ title, description, difficulty }),
     })
       .then((response) => {
         return response.json();
@@ -81,7 +82,7 @@ export function getCurrentProblemFromDatabase(questionID) {
       method: "GET",
       headers: {
         Authorization: jwtToken,
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json; charset=utf-8",
       },
     })
       .then((response) => response.json())
@@ -107,7 +108,7 @@ export function addCurrentProblemInDatabase(issue, questionID) {
       method: "POST",
       headers: {
         Authorization: jwtToken,
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json; charset=utf-8",
       },
       body: getFormBody({ ...issue, questionID }),
     })
@@ -130,7 +131,7 @@ export function deleteProblemFromDatabase(questionID) {
       method: "DELETE",
       headers: {
         Authorization: jwtToken,
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json; charset=utf-8",
       },
       body: getFormBody({ questionID }),
     })
@@ -159,7 +160,7 @@ export function updateIssueInDatabase(issueAssignee, issueID) {
       method: "POST",
       headers: {
         Authorization: jwtToken,
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json; charset=utf-8",
       },
       body: getFormBody({ issueAssignee, issueID }),
     })
@@ -179,7 +180,7 @@ export function updateStatusOfIssueOnserver(issueStatus, issueID) {
       method: "PATCH",
       headers: {
         Authorization: jwtToken,
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json; charset=utf-8",
       },
       body: getFormBody({ issueStatus, issueID }),
     })
@@ -200,5 +201,25 @@ export function updateReqInfoReturnedFromServer(
     type: UPDATE_REQ_INFO_RETURNED_FROM_SERVER,
     reqStatus,
     reqMessage,
+  };
+}
+
+export function addSubMissionToAQuestion(questionId, code) {
+  return (dispatch) => {
+    let jwtToken = localStorage.getItem("token");
+    let url = APIUrls.addSubmissionToQuestion();
+    fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: jwtToken,
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: getJsonBody({ _id: questionId, code }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("data is on post", data);
+        dispatch(updateCurrentProblemInStore(data.question));
+      });
   };
 }

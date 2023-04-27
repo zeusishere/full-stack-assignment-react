@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Table, Tooltip, Alert } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Table,
+  Tooltip,
+  Alert,
+  Badge,
+} from "react-bootstrap";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Navigate } from "react-router";
@@ -60,7 +68,13 @@ class AllProblems extends Component {
     let questionList = questionsOnCurrentPage.map((question, index) => {
       // to deal with accessing properties of undefined
       if (question == undefined) return "";
-      let { title, description, difficulty, _id } = question;
+      let { title, description, difficulty, _id, acceptance } = question;
+      const difficultyBadgeClass =
+        difficulty === "medium"
+          ? "success"
+          : difficulty === "easy"
+          ? "primary"
+          : "danger";
       return (
         <tr key={_id}>
           <td className="text-center">{index + 1}</td>
@@ -69,7 +83,10 @@ class AllProblems extends Component {
               {title}
             </Link>
           </td>
-          <td className="text-center">{difficulty || "Medium"}</td>
+          <td className="text-center">
+            <Badge bg={difficultyBadgeClass}>{difficulty}</Badge>
+          </td>
+          <td className="text-center">{acceptance}</td>
           {/* <td className="text-start">
             <div style={{ display: "inline-block" }} className="mx-1">
               <img src={writer} style={{ width: "30px" }} />
@@ -104,7 +121,7 @@ class AllProblems extends Component {
       );
     });
 
-    console.log("questionList    ", questionList);
+    console.log("questionList    ", questionList, auth && auth?.user?.role);
     // loads private route only when page user is logged in; if user is not logged in he is directed to sign in page
     if (auth && !auth.isLoggedin) {
       return <Navigate to="/user/sign-in" />;
@@ -123,9 +140,11 @@ class AllProblems extends Component {
               </Alert>
             </Col>
           )}
-          <Col>
-            <AddNewProblem />
-          </Col>
+          {auth && auth?.user?.role === "admin" && (
+            <Col>
+              <AddNewProblem />
+            </Col>
+          )}
         </Row>
         {questionList.length > 0 && (
           <Row>
@@ -139,10 +158,10 @@ class AllProblems extends Component {
                   <tr>
                     <th>#</th>
                     <th>Problem</th>
-                    <th>Updated At</th>
-                    <th className="text-start">Author</th>
-                    <th className="text-start">Members</th>
-                    <th className="text-center"></th>
+                    <th>Difficulty</th>
+                    <th>Acceptance</th>
+                    <th>Completed</th>
+                    {/* <th className="text-center"></th> */}
                   </tr>
                 </thead>
                 <tbody>{questionList}</tbody>

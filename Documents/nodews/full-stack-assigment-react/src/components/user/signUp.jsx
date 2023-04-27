@@ -54,7 +54,7 @@ class SignUp extends Component {
     let { error, isLoggedin } = this.props.auth;
 
     if (isLoggedin) {
-      return <Navigate to="/all-problems" />;
+      return <Navigate to="/" />;
     }
     return (
       <Container style={{ marginTop: "16%", marginBottom: "80px" }}>
