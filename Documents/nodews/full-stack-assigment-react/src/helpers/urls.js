@@ -7,19 +7,6 @@ export const APIUrls = {
   getAllProblemsFromServerDB: () => ` ${API_ROOT}/v1/questions`,
   getCurrentProblemFromServerDB: (projectID) =>
     `${API_ROOT}/v1/question/?projectID=${projectID}`,
-  // get users in add new user component
-  getUsersFromServerDB: (email) => {
-    return `${API_ROOT}/user/get-users/?email=${email}`;
-  },
-  sendUsersSelectedToAddToProblem: () => {
-    return `${API_ROOT}/project/add-users`;
-  },
-  sendIssueToAddToProblem: () => {
-    return `${API_ROOT}/issue/add-issue`;
-  },
-  updateAssigneeOnIssue: () => {
-    return `${API_ROOT}/issue/update-issue-assignee`;
-  },
   deleteProblemFromServerDB: (projectID) => {
     return `${API_ROOT}/project/delete/?projectID=${projectID}`;
   },

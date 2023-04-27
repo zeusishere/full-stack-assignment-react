@@ -1,14 +1,6 @@
 import React, { Component } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Routes,
-  Navigate,
-  Outlet,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
-import DashBoard from "../dashboard/Dashboard";
 import AllProblems from "../project/AllProblems";
 import Problem from "../project/Problem";
 import SignIn from "../user/SignIn";
@@ -26,17 +18,6 @@ class MainContent extends Component {
             <Col lg={{ span: 10, offset: 1 }}>
               <Routes>
                 <Route path="/" element={<AllProblems />}></Route>
-                {/* <Route path="/project" element={<PrivateRoute />}>
-                  <Route path="/project" element={<Problem />}></Route>
-                </Route> */}
-                {/* <Route
-                  path="/project"
-                  element={
-                    <PrivateRoute isLoggedin={isLoggedin}>
-                      <Problem></Problem>
-                    </PrivateRoute> 
-                   }
-                ></Route> */}
                 <Route
                   path="/question/id/:id"
                   element={<Problem></Problem>}

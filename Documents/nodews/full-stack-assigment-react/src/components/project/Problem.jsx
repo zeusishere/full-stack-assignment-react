@@ -1,35 +1,12 @@
-import React, { Component, useState } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router";
-import Tag from "./Tag";
 import { useParams } from "react-router-dom";
 import {
-  getCurrentProblemFromDatabase,
   updateCurrentProblemInStore,
   addSubMissionToAQuestion,
 } from "../../actions/actionCreators/question";
-import {
-  Container,
-  Row,
-  Col,
-  Dropdown,
-  Button,
-  Form,
-  Alert,
-  FormControl,
-  Badge,
-} from "react-bootstrap";
-import Table from "react-bootstrap/Table";
-
-import AddNewIssue from "./AddNewIssue";
-import AddUserToProblem from "./AddUserToProblem";
-import RadioSelector from "./RadioSelector";
-import AssignUserModal from "./AssignUserModal";
-import { Tooltip } from "react-bootstrap";
-import TooltipForMembers from "./TooltipForMembers";
-import StatusChangeComponent from "./StatusChangeComponent";
-import IssueTypeSelector from "./public/IssueTypeSelector";
-import PaginationComponent from "./PaginationComponent";
+import { Container, Row, Col, Button, Form, Badge } from "react-bootstrap";
 
 function Problem(props) {
   // get id of project from url params
@@ -125,13 +102,6 @@ function Problem(props) {
         ))}
       </Row>
       <Row className="mb-2 mt-3 ms-1">
-        {/* <Col>
-          <Badge bg="dark" className="py-2 fs-6 text-capitalize">
-            :{" "}
-            {currentProblem.projectAuthor &&
-              currentProblem.projectAuthor.userName}
-          </Badge>
-        </Col> */}
         <Col className="text-end">
           <h5 className="text-muted d-inline-block">Difficulty : </h5>
           <Badge bg={difficultyBadgeClass}> {difficulty.toUpperCase()}</Badge>

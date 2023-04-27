@@ -14,15 +14,9 @@ import { Navigate } from "react-router";
 import {
   deleteProblemFromDatabase,
   getAllProblemsFromDatabase,
-  updateCurrentProblemInStore,
 } from "../../actions/actionCreators/question";
 import AddNewProblem from "./AddNewProblem";
-import TooltipForMembers from "./TooltipForMembers";
-import writer from "./public/writer.png";
-import man from "./public/man.png";
 import PaginationComponent from "./PaginationComponent";
-import more from "./public/more.png";
-import DropdownOption from "./DropdownOption";
 class AllProblems extends Component {
   constructor(props) {
     super(props);
@@ -35,12 +29,6 @@ class AllProblems extends Component {
 
   componentWillMount() {
     this.props.dispatch(getAllProblemsFromDatabase());
-    // this.setState((state) => {
-    //   return {
-    //     totalItems: this.props.questions.length,
-    //     totalPages: Math.ceil(this.props.questions.length / state.itemsPerPage),
-    //   };
-    // });
   }
   onClickSetCurrentPageInState = (pageNumber) => {
     this.setState({ currentPage: pageNumber });
@@ -87,36 +75,6 @@ class AllProblems extends Component {
             <Badge bg={difficultyBadgeClass}>{difficulty}</Badge>
           </td>
           <td className="text-center">{acceptance}</td>
-          {/* <td className="text-start">
-            <div style={{ display: "inline-block" }} className="mx-1">
-              <img src={writer} style={{ width: "30px" }} />
-            </div>
-            {questionAuthor.userName}
-          </td> */}
-          {/* <td>
-            {questionMembers.slice(0, 5).map((user, index) => {
-              return (
-                <div
-                  key={index}
-                  style={{ display: "inline-block" }}
-                  className="mx-1"
-                >
-                  <TooltipForMembers
-                    tooltipMessage={user.userName}
-                    key={index}
-                  />
-                </div>
-              );
-            })}
-          </td> */}
-          {/* <td className="text-center">
-          we will pass delete fn as a prop to be registered on a drop down menu
-          <DropdownOption
-            id={_id}
-            delete={deleteProblemFromDatabase}
-            isDropdownVisible={questionAuthor._id === auth.user._id}
-          ></DropdownOption>
-        </td> */}
         </tr>
       );
     });
@@ -181,7 +139,6 @@ class AllProblems extends Component {
   }
 }
 const mapStateToProps = (state) => {
-  console.log("state-----> ", state);
   return { auth: state.userAuth, questions: state.questions };
 };
 export default connect(mapStateToProps)(AllProblems);

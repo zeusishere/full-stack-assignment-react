@@ -127,12 +127,6 @@ class AddNewProblem extends Component {
 
             <Form.Group className="mb-3" controlId="difficulty">
               <Form.Label>Difficulty: </Form.Label>
-              {/* <Form.Control
-                type="text"
-                placeholder="Enter Problem Name"
-                name="title"
-                onChange={this.updateProblemNameOnUserInput}
-              /> */}
               {"    "}
               <Form.Check
                 inline
